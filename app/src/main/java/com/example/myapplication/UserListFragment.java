@@ -20,12 +20,16 @@ public class UserListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_user_list,viewGroup,false);
         userRecyclerView = view.findViewById(R.id.userRecyclerView);
+        /* setLayoutManager - РесайклерВью без него работать не будет, нужно чтобы он знал как отображать элементы,
+        * устанавливаем Менеджер и в него кладем нижние элементы
+        * new LinearLayoutManager - позволяет создавать списком элементы
+        * getActivity() - позволяет получить текущую активность*/
         userRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        UserList userList = UserList.get();
-        List<User> users = userList.getUsers();
-        userAdapter = new UserAdapter(users);
-        userRecyclerView.setAdapter(userAdapter);
+        UserList userList = UserList.get(); // создаем переменную UserList чтобы получить список пользователей
+        List<User> users = userList.getUsers(); // получаем список пользователей и записываем в переменную users
+        userAdapter = new UserAdapter(users); // создаем переменную ЮзерАдаптер и кладем туда список юзеров
+        userRecyclerView.setAdapter(userAdapter); // устанавливаем Адаптер для userRecyclerView
 
         return view;
     }
@@ -36,6 +40,8 @@ public class UserListFragment extends Fragment {
             super(inflater.inflate(R.layout.list_item_user,viewGroup,false));
             userItem = itemView.findViewById(R.id.userItem);
         }
+        // связываем текст который приходит в списке Юзерс с элементом ЮзерАйтем
+        // короче, просто красиво выводим юхеров на экран
         public void bind(User user){
             String userName = "Имя: "+user.getUserName()+"\n"+"Фамилия: "+user.getUserLastName()+"\n---------";
             userItem.setText(userName);
@@ -47,18 +53,19 @@ public class UserListFragment extends Fragment {
             this.users = users;
         }
 
+        // создает нам элемент списка, когда мы листаем список вверх
         @Override
         public UserHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             return new UserHolder(inflater,viewGroup);
         }
-
+        // привязываем контент к какому-то списку.
         @Override
         public void onBindViewHolder(UserHolder userHolder, int position) {
             User user = users.get(position);
             userHolder.bind(user);
         }
-
+        // переопределяем метод - возвоащаем количество юзеров в списке
         @Override
         public int getItemCount() {
             return users.size();
