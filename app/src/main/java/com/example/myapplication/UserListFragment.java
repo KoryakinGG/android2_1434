@@ -1,71 +1,97 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class UserListFragment extends Fragment {
-    private RecyclerView userRecyclerView;
+    private RecyclerView userRecyclerView; // элемент для отображения списка (делает прокручиваемый список)
+    private UserList userList;
+    private List<User> users;
     private UserAdapter userAdapter;
-    // Метод создаёт компонент View фрагмента из XML разментки
-    @Override
+    private Button openAddUserActivity;
+
+    @Override // Метод создаёт компонент View фрагмента из XML разментки
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
+       // создаем предастваление (view), "раздуваем" компонент из шаблона fragment_user_list, который RecyclerView (т.е. список)
         View view = inflater.inflate(R.layout.fragment_user_list,viewGroup,false);
+        // привязываем элемент  userRecyclerView к конкретному xml файлу userRecyclerView
         userRecyclerView = view.findViewById(R.id.userRecyclerView);
-        /* setLayoutManager - РесайклерВью без него работать не будет, нужно чтобы он знал как отображать элементы,
-        * устанавливаем Менеджер и в него кладем нижние элементы
-        * new LinearLayoutManager - позволяет создавать списком элементы
-        * getActivity() - позволяет получить текущую активность*/
+        // упорядочиваем элементы RecyclerView через LayoutManager, говорим, что элементы будет идти списком (который мы будем прокручивать через RecyclerView)
         userRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // кнопка для перехода на новую активность, привязываем ее к xml
+        openAddUserActivity = view.findViewById(R.id.openAddUserActivity);
+        // создаем или проверяем есть ли юзерлист на этой активности
+        userList = UserList.get(getActivity());
+        // получаем лист юзеров
+        users = userList.getUsers();
+        // создаем адаптер
+        userAdapter = new UserAdapter(users);
+        userRecyclerView.setAdapter(userAdapter);
 
-        UserList userList = UserList.get(); // создаем переменную UserList чтобы получить список пользователей
-        List<User> users = userList.getUsers(); // получаем список пользователей и записываем в переменную users
-        userAdapter = new UserAdapter(users); // создаем переменную ЮзерАдаптер и кладем туда список юзеров
-        userRecyclerView.setAdapter(userAdapter); // устанавливаем Адаптер для userRecyclerView
-
+        // тут нужно заменить активность на фрагмент
+        openAddUserActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), AddUser.class));
+            }
+        });
         return view;
     }
 
-    private class UserHolder extends RecyclerView.ViewHolder{
-        private TextView userItem;
+    // Класс UserHolder формирует элементы списка
+    private class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView userItemTextView;
+        private User itemUser;
+        // создаем конструтор UserHolder
         public UserHolder(LayoutInflater inflater, ViewGroup viewGroup){
             super(inflater.inflate(R.layout.list_item_user,viewGroup,false));
-            userItem = itemView.findViewById(R.id.userItem);
+            // itemView - это элемент списка
+            userItemTextView = itemView.findViewById(R.id.userItem);
+            // устанавливаем клик листнер
+            itemView.setOnClickListener(this);
         }
-        // связываем текст который приходит в списке Юзерс с элементом ЮзерАйтем
-        // короче, просто красиво выводим юхеров на экран
         public void bind(User user){
+            itemUser = user;
             String userName = "Имя: "+user.getUserName()+"\n"+"Фамилия: "+user.getUserLastName()+"\n---------";
-            userItem.setText(userName);
+            userItemTextView.setText(userName); // Устанавливаем текст элемента списка
+        }
+        // обработка клик листнера, вызываем метод из майнАктивити, кладем в него представление и юзера, по которому кликаем
+        @Override
+        public void onClick(View view) {
+            MainActivity.changeFragment(view, itemUser);
         }
     }
+
+    // Класс UserAdapter отдаёт элементы в RecyclerView
     private class UserAdapter extends RecyclerView.Adapter<UserHolder>{
         private List<User> users;
+        // конструктор ЮзерАдаптер
         public UserAdapter(List<User> users){
             this.users = users;
         }
 
-        // создает нам элемент списка, когда мы листаем список вверх
         @Override
         public UserHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             return new UserHolder(inflater,viewGroup);
         }
-        // привязываем контент к какому-то списку.
+
         @Override
         public void onBindViewHolder(UserHolder userHolder, int position) {
             User user = users.get(position);
             userHolder.bind(user);
         }
-        // переопределяем метод - возвоащаем количество юзеров в списке
+
         @Override
         public int getItemCount() {
             return users.size();
