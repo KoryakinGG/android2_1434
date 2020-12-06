@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+//import android.support.v4.app.Fragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,17 +21,21 @@ public class UserListFragment extends Fragment {
     private List<User> users;
     private UserAdapter userAdapter;
     private Button openAddUserActivity;
+    private Button dropBD;
 
-    @Override // Метод создаёт компонент View фрагмента из XML разментки
+    @Override // Метод создаёт компонент View фрагмента из XML разметки
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
-       // создаем предастваление (view), "раздуваем" компонент из шаблона fragment_user_list, который RecyclerView (т.е. список)
+       // создаем представление (view), "раздуваем" компонент из шаблона fragment_user_list, который RecyclerView (т.е. список)
         View view = inflater.inflate(R.layout.fragment_user_list,viewGroup,false);
         // привязываем элемент  userRecyclerView к конкретному xml файлу userRecyclerView
         userRecyclerView = view.findViewById(R.id.userRecyclerView);
         // упорядочиваем элементы RecyclerView через LayoutManager, говорим, что элементы будет идти списком (который мы будем прокручивать через RecyclerView)
         userRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        // кнопка для перехода на новую активность, привязываем ее к xml
+        // кнопка для перехода на новую активность, привязываем ее к xml  --> переопределяем ее на переход на новый фрагмент
         openAddUserActivity = view.findViewById(R.id.openAddUserActivity);
+
+        dropBD = view.findViewById(R.id.dropBD);
+
         // создаем или проверяем есть ли юзерлист на этой активности
         userList = UserList.get(getActivity());
         // получаем лист юзеров
@@ -38,17 +44,27 @@ public class UserListFragment extends Fragment {
         userAdapter = new UserAdapter(users);
         userRecyclerView.setAdapter(userAdapter);
 
-        // тут нужно заменить активность на фрагмент
+        // при нажатии этой кнопки, тут нужно заменить активность на фрагмент
         openAddUserActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getContext(), AddUser.class));
+//                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+//                Fragment fragmentAddUser= (FragmentAddUser)getFragmentManager().findFragmentById(R.id.fragmentAddUserContainer);
+//                activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentAddUserContainer, fragmentAddUser).commit();
+            }
+        });
+
+        dropBD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userList.dropDB();
             }
         });
         return view;
     }
 
-    // Класс UserHolder формирует элементы списка
+    // Класс UserHolder формирует элементы списка, будем слушать весь элемент, через клик листнер
     private class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView userItemTextView;
         private User itemUser;
@@ -97,5 +113,4 @@ public class UserListFragment extends Fragment {
             return users.size();
         }
     }
-
 }

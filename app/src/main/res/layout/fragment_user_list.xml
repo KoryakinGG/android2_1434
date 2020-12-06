@@ -12,6 +12,15 @@
         android:text="Добавить пользователя"
         android:layout_marginBottom="15dp"
         android:id="@+id/openAddUserActivity"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="дропнуть базу"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/dropBD"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

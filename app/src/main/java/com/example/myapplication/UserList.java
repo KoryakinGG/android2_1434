@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.myapplication.database.UserBaseHelper;
 import com.example.myapplication.database.UserDbSchema;
@@ -17,7 +18,7 @@ public class UserList {
     private static UserList userList;
     private Context context;
     private SQLiteDatabase database;
-    private List users = new ArrayList();
+    private List users;  // ВОТ ТУТ БЫЛА ОШИБКА, так как переменная глобальная, то список дополнялся, а не создавался заново
 
     // проверяем, если юзерлист не создан, то создаем, если создан, то возвращаем
     public static UserList get(Context context){
@@ -32,14 +33,17 @@ public class UserList {
         database = new UserBaseHelper(context).getWritableDatabase(); // надо чтобы отправлять запросы в базу данных
     }
 
-    // возврщаем список юзеров
+    // возвращаем список юзеров
     public List getUsers(){
+        users = new ArrayList();
         UserCursorWrapper cursor = queryUsers(null,null);
         try {
             cursor.moveToFirst();
-            while (!cursor.isAfterLast()){        // типо hasNext в итераторе, смотрит если следующая строка
+            Log.d("СМОТРИМ СКОЛЬКО БЫЛО В ЛИСТЕ", Integer.toString(users.size()));
+            while (!cursor.isAfterLast()){// типо hasNext в итераторе, смотрит если следующая строка
                 users.add(cursor.getUser());      // добавляет пользователя в список, чтобы вывести на экран
                 cursor.moveToNext();   // перемещаем курсор на сл. строку
+                Log.d("СМОТРИМ СКОЛЬКО ДОБАВИЛОСЬ В ЛИСТ", Integer.toString(users.size()));
             }
         }finally {
             cursor.close();
@@ -73,5 +77,9 @@ public class UserList {
                 null,
                 null);
         return new UserCursorWrapper(cursor);
+    }
+
+    public void dropDB(){
+        database.delete(UserDbSchema.UserTable.NAME_DB_TABLE,null,null);
     }
 }

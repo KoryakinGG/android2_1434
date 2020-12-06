@@ -18,6 +18,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager(); // создаем FragmentManager, который будет управлять фрагментами, создаем через getSupportFragmentManager()
     Fragment fragment = new UserListFragment(); // создаем фрагмент из класса
+    Fragment fragmentAddUser = new FragmentAddUser(); // создаем фрагмент из класса
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) { // создает активность
         super.onCreate(savedInstanceState); // создает активность из файла activity_xml
@@ -25,27 +28,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main); // берет activity_xml файл из папки resources
 //        fragment = new UserListFragment(); // создаем фрагмент из класса
         // чтобы разместить фрагмент, вызываем фрагмент менеджер,бегин транзакшн и через метод add добавляем фрагмент во фреймлойаут
-        // метод addToBackStack
-        fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment,"main_fragment").addToBackStack("main_fragment").commit();
+        // метод addToBackStack добавляет фрагмент в стек
+        fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).addToBackStack("main_fragment").commit();
     }
+
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-//        Fragment fragment = new UserListFragment();  ---- ВОТ ЭТО ДУБЛИРУЕТ СПИСОК
+        Fragment fragment = new UserListFragment();
         // R.id.fragmentContainer - это FrameLayout из файла activity_main.xml
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment,"main_fragment").commit();
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment, "main_fragment").commit();
     }
+
     @Override
     public void onBackPressed() {
         Fragment currentFragment = fragmentManager.findFragmentByTag("main_fragment");
-        if (currentFragment != null && currentFragment.isVisible()){
+        // если основной фрагмент не ноль и мы его видим, то выходим
+        if (currentFragment != null && currentFragment.isVisible()) {
             super.onBackPressed();
-        }else {
+        } else {
+        // если не на основном фрагменте, то выходим на основной фрагмент
 //            Fragment fragment = new UserListFragment();
             fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment, "main_fragment").commit();
         }
     }
-    public static void changeFragment(View view, User user){
+
+    public static void changeFragment(View view, User user) {
         // Получаем хостинговую активность (в нашем случае MainActivity)
         FragmentActivity activity = (FragmentActivity) view.getContext();
         // Создаём менеджер фрагментов
@@ -61,5 +69,4 @@ public class MainActivity extends AppCompatActivity {
         //Заменяем фрагмент
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
     }
-
 }
