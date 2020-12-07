@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -18,7 +19,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager(); // создаем FragmentManager, который будет управлять фрагментами, создаем через getSupportFragmentManager()
     Fragment fragment = new UserListFragment(); // создаем фрагмент из класса
-    Fragment fragmentAddUser = new FragmentAddUser(); // создаем фрагмент из класса
+
 
 
     @Override
@@ -69,4 +70,6 @@ public class MainActivity extends AppCompatActivity {
         //Заменяем фрагмент
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
     }
+
+
 }

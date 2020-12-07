@@ -18,7 +18,10 @@ public class FragmentAddUser extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_user_fragment, container, false);
 
+        nameEditText = view.findViewById(R.id.nameEditText1);
+        lastnameEditText = view.findViewById(R.id.lastnameEditText1);
         addUserBtn1 = view.findViewById(R.id.addUserBtn1);
+
         addUserBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,3 +1,4 @@
+/*
 package com.example.myapplication;
 
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ public class AddUser extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user);
+        // привязываем кнопки
         nameEditText = findViewById(R.id.nameEditText);
         lastnameEditText = findViewById(R.id.lastnameEditText);
         addUserBtn = findViewById(R.id.addUserBtn);
@@ -39,4 +41,4 @@ public class AddUser extends AppCompatActivity {
             }
         });
     }
-}
+}*/

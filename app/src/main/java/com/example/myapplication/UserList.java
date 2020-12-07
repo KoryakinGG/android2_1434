@@ -11,6 +11,7 @@ import com.example.myapplication.database.UserDbSchema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 // Синглетный класс (может быть создан только один объект)
 public class UserList {
@@ -18,7 +19,7 @@ public class UserList {
     private static UserList userList;
     private Context context;
     private SQLiteDatabase database;
-    private List users;  // ВОТ ТУТ БЫЛА ОШИБКА, так как переменная глобальная, то список дополнялся, а не создавался заново
+    private List users;
 
     // проверяем, если юзерлист не создан, то создаем, если создан, то возвращаем
     public static UserList get(Context context){
@@ -82,4 +83,16 @@ public class UserList {
     public void dropDB(){
         database.delete(UserDbSchema.UserTable.NAME_DB_TABLE,null,null);
     }
+
+    public void updateUser (User user) {
+        String uuidString = user.getUuid().toString(); // получаем UUID строки
+        ContentValues values = getContentValues(user); // контент вальюс имеет связку столбцов и значений (это метод который выше)
+        //апдейтим базу: имя базы, поменять параметры в этих столбцах (values), у того чей UUID совпадает с тем, что в последнем параметре
+        database.update(UserDbSchema.UserTable.NAME_DB_TABLE, values, UserDbSchema.UserTable.Cols.UUID + "=?", new String[]{uuidString});
+    }
+
+    public void deleteUser(UUID uuid){
+        database.delete(UserDbSchema.UserTable.NAME_DB_TABLE, "uuid = ?", new String[]{String.valueOf(uuid)});
+    }
+
 }

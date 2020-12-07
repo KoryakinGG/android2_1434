@@ -48,10 +48,15 @@ public class UserListFragment extends Fragment {
         openAddUserActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), AddUser.class));
-//                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-//                Fragment fragmentAddUser= (FragmentAddUser)getFragmentManager().findFragmentById(R.id.fragmentAddUserContainer);
-//                activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentAddUserContainer, fragmentAddUser).commit();
+                //startActivity(new Intent(getContext(), AddUser.class));
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                // Что ещё за магия???
+                //Fragment fragmentAddUser= (FragmentAddUser)getFragmentManager().findFragmentById(R.id.fragmentAddUserContainer);
+                Fragment fragment = new FragmentAddUser();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,  fragment).commit();
+                //MainActivity.changeFragment(view,null,);
+                // Ну как вариант. Можно и подругому. Но так тоже норм. Вы не правильно использовали метод replace.
+                // replace(ГДЕ, на что) - первый аргумент говорит где менять, второн на что менять
             }
         });
 
